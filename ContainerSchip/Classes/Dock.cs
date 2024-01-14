@@ -37,6 +37,7 @@ namespace ContainerSchip.Classes
             int valuableContainerCount = 0;
             int coolableContainerCount = 0;
             int valuableCoolableContainerCount = 0;
+            int normalContainerCount = 0;
 
             Dictionary<int, List<Ship>> shipsByWidthDictionary = new Dictionary<int, List<Ship>>();
             foreach (var container in containers)
@@ -53,6 +54,7 @@ namespace ContainerSchip.Classes
                         coolableContainerCount++;
                         break;
                     default:
+                        normalContainerCount++;
                         break;
                 }
             }
@@ -103,16 +105,80 @@ namespace ContainerSchip.Classes
                 }
             }
 
-            if (coolableContainerCount <= 3 * valuableCoolableContainerCount && valuableContainerCount <= valuableCoolableContainerCount)
+            if (coolableContainerCount > 3 * valuableCoolableContainerCount || valuableContainerCount > valuableCoolableContainerCount)
             {
-                return usedShips;
+                int additionalCapacityNeeded = Math.Max(valuableContainerCount, coolableContainerCount) - valuableCoolableContainerCount;
+
+                foreach (var width in sortedWidths)
+                {
+                    if (additionalCapacityNeeded <= 0)
+                    {
+                        break;
+                    }
+
+                    foreach (var ship in shipsByWidthDictionary[width])
+                    {
+                        if (!usedShips.Contains(ship))
+                        {
+                            additionalCapacityNeeded -= width;
+                            usedShips.Add(ship);
+                        }
+
+                        if (additionalCapacityNeeded <= 0)
+                        {
+                            break;
+                        }
+                    }
+                }
             }
-            else
+            int totalCapacityForNormalContainers = 0;
+
+            foreach (var ship in usedShips)
             {
+                int shipCapacityForNormal = ship.Length * ship.Width * 4;
 
+                shipCapacityForNormal -= (valuableContainerCount + coolableContainerCount + valuableCoolableContainerCount);
+
+                totalCapacityForNormalContainers += shipCapacityForNormal;
             }
 
-            
+            while (totalCapacityForNormalContainers < normalContainerCount)
+            {
+                bool shipAdded = false;
+
+                foreach (var width in sortedWidths)
+                {
+                    foreach (var ship in shipsByWidthDictionary[width])
+                    {
+                        if (!usedShips.Contains(ship))
+                        {
+                            usedShips.Add(ship);
+                            shipAdded = true;
+
+                            int shipCapacityForNormal = ship.Length * ship.Width * 4;
+                            shipCapacityForNormal -= (valuableContainerCount + coolableContainerCount + valuableCoolableContainerCount);
+                            totalCapacityForNormalContainers += shipCapacityForNormal;
+
+                            if (totalCapacityForNormalContainers >= normalContainerCount)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (shipAdded || totalCapacityForNormalContainers >= normalContainerCount)
+                    {
+                        break;
+                    }
+                }
+
+                if (!shipAdded)
+                {
+                    break;
+                }
+            }
+
+            return usedShips;
         }
     }
 
