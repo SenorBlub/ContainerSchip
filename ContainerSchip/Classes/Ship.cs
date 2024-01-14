@@ -9,14 +9,14 @@ public class Ship
 
     public int MaxWeight { get; }
 
-    public IContainer[,] ShipData { get; }
+    public IContainer[,,] ShipData { get; }
 
     public Ship(int length, int width)
     {
         Length = length;
         Width = width;
         MaxWeight = 120000 * length * width;
-        ShipData = new IContainer[length, width];
+        ShipData = new IContainer[length, width, 4];
     }
 
     public bool IsBalanced()

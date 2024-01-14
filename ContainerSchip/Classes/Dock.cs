@@ -171,10 +171,56 @@ namespace ContainerSchip.Classes
                 }
             }
 
+            usedShips.Sort((x, y) => y.MaxWeight.CompareTo(x.MaxWeight));
+
             return usedShips;
         }
 
+        public List<IContainer> SortContainers()
+        {
+            List<IContainer> normalContainers = new List<IContainer>();
+            List<IContainer> coolableContainers = new List<IContainer>();
+            List<IContainer> valuableContainers = new List<IContainer>();
+            List<IContainer> coolableValuableContainers = new List<IContainer>();
+            List<IContainer> sortedContainers = new List<IContainer>();
 
+            foreach (var container in containers)
+            {
+                switch ((container.valuable, container.coolable))
+                {
+                    case (true, true):
+                        coolableValuableContainers.Add(container);
+                        break;
+                    case (true, false):
+                        valuableContainers.Add(container);
+                        break;
+                    case (false, true):
+                        coolableContainers.Add(container);
+                        break;
+                    default:
+                        normalContainers.Add(container);
+                        break;
+                }
+            }
+
+            normalContainers.Sort((x, y) => y.weight.CompareTo(x.weight));
+            coolableContainers.Sort((x, y) => y.weight.CompareTo(x.weight));
+            valuableContainers.Sort((x, y) => y.weight.CompareTo(x.weight));
+            coolableValuableContainers.Sort((x, y) => y.weight.CompareTo(x.weight));
+
+
+            sortedContainers.AddRange(coolableValuableContainers);
+            sortedContainers.AddRange(coolableContainers);
+            sortedContainers.AddRange(valuableContainers);
+            sortedContainers.AddRange(normalContainers);
+
+            return sortedContainers;
+        }
+
+        public List<Ship> PlaceContainers(List<Ship> usableShips, List<IContainer> sortedContainers)
+        {
+            
+        }
     }
 
 }
