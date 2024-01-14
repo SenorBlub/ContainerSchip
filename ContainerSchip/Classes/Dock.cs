@@ -67,29 +67,25 @@ namespace ContainerSchip.Classes
                 }
                 else
                 {
-                    shipsByWidthDictionary.Add(ship.Width, new List<Ship>
-                    {
-                        ship
-                    });
+                    shipsByWidthDictionary.Add(ship.Width, new List<Ship> { ship });
                 }
-
             }
 
             var sortedWidths = shipsByWidthDictionary.Keys.OrderByDescending(x => x).ToList();
 
             int currentCapacity = 0;
             List<Ship> usedShips = new List<Ship>();
+            int totalWeight = containers.Sum(c => c.weight);
+            int maxStackWeight = 120000; // 120 tonnes in kg
 
             foreach (var width in sortedWidths)
             {
-
                 foreach (var ship in shipsByWidthDictionary[width])
                 {
                     if (currentCapacity >= valuableCoolableContainerCount)
                     {
-                        break; 
+                        break;
                     }
-
                     currentCapacity += width;
                     usedShips.Add(ship);
 
@@ -98,10 +94,9 @@ namespace ContainerSchip.Classes
                         break;
                     }
                 }
-
                 if (currentCapacity >= valuableContainerCount)
                 {
-                    break; 
+                    break;
                 }
             }
 
@@ -122,30 +117,32 @@ namespace ContainerSchip.Classes
                         {
                             additionalCapacityNeeded -= width;
                             usedShips.Add(ship);
-                        }
 
-                        if (additionalCapacityNeeded <= 0)
-                        {
-                            break;
+                            if (additionalCapacityNeeded <= 0)
+                            {
+                                break;
+                            }
                         }
                     }
                 }
             }
-            int totalCapacityForNormalContainers = 0;
 
+            int totalCapacityForNormalContainers = 0;
             foreach (var ship in usedShips)
             {
                 int shipCapacityForNormal = ship.Length * ship.Width * 4;
-
                 shipCapacityForNormal -= (valuableContainerCount + coolableContainerCount + valuableCoolableContainerCount);
-
                 totalCapacityForNormalContainers += shipCapacityForNormal;
+                int shipMaxWeight = ship.Length * ship.Width * maxStackWeight * 4;
+                if (totalWeight > shipMaxWeight || ship.MaxWeight / 2 > totalWeight)
+                {
+                    throw new InvalidOperationException("Ship weight limit exceeded or capacity less than 50%");
+                }
             }
 
             while (totalCapacityForNormalContainers < normalContainerCount)
             {
                 bool shipAdded = false;
-
                 foreach (var width in sortedWidths)
                 {
                     foreach (var ship in shipsByWidthDictionary[width])
@@ -154,24 +151,20 @@ namespace ContainerSchip.Classes
                         {
                             usedShips.Add(ship);
                             shipAdded = true;
-
                             int shipCapacityForNormal = ship.Length * ship.Width * 4;
                             shipCapacityForNormal -= (valuableContainerCount + coolableContainerCount + valuableCoolableContainerCount);
                             totalCapacityForNormalContainers += shipCapacityForNormal;
-
                             if (totalCapacityForNormalContainers >= normalContainerCount)
                             {
                                 break;
                             }
                         }
                     }
-
                     if (shipAdded || totalCapacityForNormalContainers >= normalContainerCount)
                     {
                         break;
                     }
                 }
-
                 if (!shipAdded)
                 {
                     break;
@@ -180,6 +173,8 @@ namespace ContainerSchip.Classes
 
             return usedShips;
         }
+
+
     }
 
 }

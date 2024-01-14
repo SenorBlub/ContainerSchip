@@ -7,7 +7,7 @@ public class Ship
     public int Length { get; }
     public int Width { get; }
 
-    private int MaxWeight { get; }
+    public int MaxWeight { get; }
 
     public IContainer[,] ShipData { get; }
 
