@@ -24,7 +24,7 @@ public class ValuableCoolableContainer : IContainer
         coolable = true;
     }
 
-    public double CalculateFitness(int width, int height, int length, bool isTopContainer, bool frontAccessible, bool backAccessible)
+    public double CalculateFitness(int width, int height, int length, IContainer[,,] shipData)
     {
         double dWidth = (double)width;
         double dHeight = (double)height;
@@ -36,17 +36,32 @@ public class ValuableCoolableContainer : IContainer
             fitness += 1000000;
         }
 
-        if (!isTopContainer)
+        if (!IsTopContainer(length, width, height, shipData))
         {
             fitness += 1000000;
         }
 
-        if (!frontAccessible || backAccessible)
+        if (!HasContainerInFront(length, width, height, shipData) || !HasContainerBehind(length, width, height, shipData))
         {
             fitness += 1000000;
         }
 
         return fitness;
+    }
+
+    bool IsTopContainer(int length, int width, int height, IContainer[,,] shipData)
+    {
+        return height == shipData.GetLength(2) - 1 || shipData[length, width, height + 1] == null;
+    }
+
+    bool HasContainerInFront(int length, int width, int height, IContainer[,,] shipData)
+    {
+        return length > 0 && shipData[length - 1, width, height] != null;
+    }
+
+    bool HasContainerBehind(int length, int width, int height, IContainer[,,] shipData)
+    {
+        return length < shipData.GetLength(0) - 1 && shipData[length + 1, width, height] != null;
     }
 
 }

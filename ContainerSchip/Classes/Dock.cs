@@ -209,7 +209,49 @@ namespace ContainerSchip.Classes
             valuableContainers.Sort((x, y) => y.weight.CompareTo(x.weight));
             coolableValuableContainers.Sort((x, y) => y.weight.CompareTo(x.weight));
 
-            foreach(var container in )
+            List<IContainer> containerPlacementList = new List<IContainer>();
+
+            containerPlacementList.AddRange(coolableContainers);
+            containerPlacementList.AddRange(coolableValuableContainers);
+            containerPlacementList.AddRange(valuableContainers);
+            containerPlacementList.AddRange(normalContainers);
+
+            foreach (var container in containerPlacementList)
+            {
+                double bestFitness = double.MaxValue;
+                int bestShip = 0;
+                int bestWidth = 0;
+                int bestLength = 0;
+                int bestHeight = 0;
+                double tempFitness = double.MaxValue;
+
+                for (int ShipIndex = 0; ShipIndex < ships.Count; ShipIndex++)
+                {
+                    for (int Width = 0; Width < ships[ShipIndex].Width; Width++)
+                    {
+                        for (int Length = 0; Length < ships[ShipIndex].Length; Length++)
+                        {
+                            for (int Height = 0; Height < 4; Height++)
+                            {
+                                tempFitness = container.CalculateFitness(Width, Height, Length, ships[ShipIndex].ShipData);
+
+                                if (tempFitness < bestFitness && ships[bestShip].ShipData[bestLength, bestWidth, bestHeight] == null)
+                                {
+                                    bestFitness = tempFitness;
+                                    bestShip = ShipIndex;
+                                    bestWidth = Width;
+                                    bestLength = Length;
+                                    bestHeight = Height;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                ships[bestShip].ShipData[bestLength, bestWidth, bestHeight] = container;
+            }
+
+            return ships;
         }
     }
 

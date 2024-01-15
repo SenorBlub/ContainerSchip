@@ -23,7 +23,7 @@ public class CoolableContainer : IContainer
         coolable = true;
     }
 
-    public double CalculateFitness(int width, int height, int length)
+    public double CalculateFitness(int width, int height, int length, IContainer[,,] shipData)
     {
         double dWidth = (double)width;
         double dHeight = (double)height;

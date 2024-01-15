@@ -21,4 +21,5 @@ public interface IContainer
     {
         get { throw new NotImplementedException(); }
     }
+    public double CalculateFitness(int width, int height, int length, IContainer[,,] shipData);
 }
