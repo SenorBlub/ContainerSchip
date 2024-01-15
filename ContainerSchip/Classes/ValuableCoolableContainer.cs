@@ -24,7 +24,7 @@ public class ValuableCoolableContainer : IContainer
         coolable = true;
     }
 
-    public double CalculateFitness(int width, int height, int length)
+    public double CalculateFitness(int width, int height, int length, bool isTopContainer, bool frontAccessible, bool backAccessible)
     {
         double dWidth = (double)width;
         double dHeight = (double)height;
@@ -35,6 +35,17 @@ public class ValuableCoolableContainer : IContainer
         {
             fitness += 1000000;
         }
+
+        if (!isTopContainer)
+        {
+            fitness += 1000000;
+        }
+
+        if (!frontAccessible || backAccessible)
+        {
+            fitness += 1000000;
+        }
+
         return fitness;
     }
 
