@@ -30,7 +30,7 @@ public class ValuableContainer : IContainer
         double dHeight = (double)height;
         dWidth += 1;
         dHeight += 1;
-        fitness = weight / ((width / (width * 0.5)) * (1 / height));
+        fitness = weight / ((width / (width * 0.5)) * height);
         if (!isTopContainer)
         {
             fitness += 1000000;
