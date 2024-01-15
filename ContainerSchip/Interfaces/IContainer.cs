@@ -7,6 +7,11 @@ public interface IContainer
         get { throw new NotImplementedException(); }
     }
 
+    public double fitness
+    {
+        get { throw new NotImplementedException(); }
+    }
+
     public bool valuable
     {
         get { throw new NotImplementedException(); }

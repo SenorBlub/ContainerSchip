@@ -176,13 +176,14 @@ namespace ContainerSchip.Classes
             return usedShips;
         }
 
-        public List<IContainer> SortContainers()
+       
+
+        public List<Ship> PlaceContainers(List<Ship> usableShips, List<IContainer> containers)
         {
             List<IContainer> normalContainers = new List<IContainer>();
             List<IContainer> coolableContainers = new List<IContainer>();
             List<IContainer> valuableContainers = new List<IContainer>();
             List<IContainer> coolableValuableContainers = new List<IContainer>();
-            List<IContainer> sortedContainers = new List<IContainer>();
 
             foreach (var container in containers)
             {
@@ -208,18 +209,10 @@ namespace ContainerSchip.Classes
             valuableContainers.Sort((x, y) => y.weight.CompareTo(x.weight));
             coolableValuableContainers.Sort((x, y) => y.weight.CompareTo(x.weight));
 
+            foreach (var ship in usableShips)
+            {
 
-            sortedContainers.AddRange(coolableValuableContainers);
-            sortedContainers.AddRange(coolableContainers);
-            sortedContainers.AddRange(valuableContainers);
-            sortedContainers.AddRange(normalContainers);
-
-            return sortedContainers;
-        }
-
-        public List<Ship> PlaceContainers(List<Ship> usableShips, List<IContainer> sortedContainers)
-        {
-            
+            }
         }
     }
 
