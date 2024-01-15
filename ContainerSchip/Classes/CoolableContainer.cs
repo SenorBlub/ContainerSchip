@@ -23,11 +23,17 @@ public class CoolableContainer : IContainer
         coolable = true;
     }
 
-    public double CalculateFitness(int width, int height)
+    public double CalculateFitness(int width, int height, int length)
     {
-        width += 1;
-        height += 1;
-        fitness = weight / ((width / (width * 0.5)) * height);
-        return weight / ((width / (width * 0.5)) * height);
+        double dWidth = (double)width;
+        double dHeight = (double)height;
+        dWidth += 1;
+        dHeight += 1;
+        fitness = weight / ((width / (width * 0.5)) * (1 / height));
+        if (length > 0)
+        {
+            fitness += 1000000;
+        }
+        return fitness;
     }
 }

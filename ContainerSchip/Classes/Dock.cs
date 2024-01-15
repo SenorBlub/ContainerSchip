@@ -209,10 +209,7 @@ namespace ContainerSchip.Classes
             valuableContainers.Sort((x, y) => y.weight.CompareTo(x.weight));
             coolableValuableContainers.Sort((x, y) => y.weight.CompareTo(x.weight));
 
-            foreach (var ship in usableShips)
-            {
-
-            }
+            foreach(var container in )
         }
     }
 
