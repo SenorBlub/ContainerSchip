@@ -1,49 +1,54 @@
 ﻿using ContainerSchip.Interfaces;
-using ContainerSchip.Classes;
+using System;
+using System.Collections.Generic;
 
-public class ShipDisplay
+namespace ContainerSchip.Classes
 {
-    public void DisplayShips(List<Ship> ships)
+    public class ShipDisplay
     {
-        foreach (var ship in ships)
+        public Ship Ship { get; private set; }
+
+        public ShipDisplay(Ship ship)
         {
-            string rowSeparator = "";
-            for (int i = 0; i < ship.Length; i++)
-            {
-                rowSeparator += "/";
-            }
+            Ship = ship;
+        }
 
-            Console.WriteLine();
-
-            for (int i = 0; i < ship.Length; i++)
+        public void Display()
+        {
+            for (int height = Ship.ShipData.GetLength(2) - 1; height >= 0; height--)
             {
-                string[] containerData = new string[ship.Width];
-                for (int j = 0; j < ship.Width; j++)
+                Console.WriteLine($"Layer {height + 1}:");
+                for (int length = 0; length < Ship.ShipData.GetLength(0); length++)
                 {
-                    IContainer container = ship.ShipData[i, j];
-                    if (container == null)
+                    for (int width = 0; width < Ship.ShipData.GetLength(1); width++)
                     {
-                        containerData[j] = ",,";
-                    }
-                    else
-                    {
-                        string containerTypeString = "";
-                        switch (container.GetType().Name)
+                        IContainer container = Ship.ShipData[length, width, height];
+                        if (container != null)
                         {
-                            case "NormalContainer": containerTypeString = "N"; break;
-                            case "ValuableContainer": containerTypeString = "V"; break;
-                            case "CoolableContainer": containerTypeString = "C"; break;
-                            case "ValuableCoolableContainer": containerTypeString = "VC"; break;
+                            Console.Write(DisplayContainer(container) + " ");
                         }
-
-                        containerData[j] = containerTypeString + "--" + container.weight.ToString() + "kg";
+                        else
+                        {
+                            Console.Write("Empty ");
+                        }
                     }
+                    Console.WriteLine();
                 }
-
-                Console.WriteLine(string.Join(" ", containerData) + rowSeparator);
+                Console.WriteLine();
             }
+        }
 
-            Console.WriteLine();
+        private string DisplayContainer(IContainer container)
+        {
+            // Customize this method based on how you want to represent different container types
+            if (container.valuable && container.coolable)
+                return "VC"; // Valuable-Coolable
+            else if (container.valuable)
+                return "V "; // Valuable
+            else if (container.coolable)
+                return "C "; // Coolable
+            else
+                return "N "; // Normal
         }
     }
 }

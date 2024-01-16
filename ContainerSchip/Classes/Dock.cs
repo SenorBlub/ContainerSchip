@@ -12,7 +12,7 @@ namespace ContainerSchip.Classes
         public List<Ship> ships = new List<Ship>();
 
         public Dock(int normalContainerCount, int coolableContainerCount, int valuableContainerCount,
-            int valuableCoolableContainerCount)
+            int valuableCoolableContainerCount, int[,] shipParameters)
         {
             for (int i = 0; i < normalContainerCount; i++)
                 containers.Add(new NormalContainer());
@@ -22,6 +22,9 @@ namespace ContainerSchip.Classes
                 containers.Add(new ValuableContainer());
             for (int i = 0; i < valuableCoolableContainerCount; i++)
                 containers.Add(new ValuableCoolableContainer());
+
+            for (int i = 0; i < 100; i++)
+                MakeShips(shipParameters[i, 2], shipParameters[i, 1], shipParameters[i, 0]);
         }
 
         public List<Ship> MakeShips(int Count, int Length, int Width)
@@ -235,7 +238,7 @@ namespace ContainerSchip.Classes
                             {
                                 tempFitness = container.CalculateFitness(Width, Height, Length, ships[ShipIndex].ShipData);
 
-                                if (tempFitness < bestFitness && ships[bestShip].ShipData[bestLength, bestWidth, bestHeight] == null)
+                                if (tempFitness < bestFitness && ships[bestShip].ShipData[bestLength, bestWidth, bestHeight].fitness == null)
                                 {
                                     bestFitness = tempFitness;
                                     bestShip = ShipIndex;
