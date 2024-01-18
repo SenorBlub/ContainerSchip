@@ -24,7 +24,7 @@ namespace ContainerSchip.Classes
                 containers.Add(new ValuableCoolableContainer());
 
             for (int i = 0; i < 100; i++)
-                MakeShips(shipParameters[i, 2], shipParameters[i, 1], shipParameters[i, 0]);
+                ships.AddRange(MakeShips(shipParameters[i, 2], shipParameters[i, 1], shipParameters[i, 0]));
         }
 
         public List<Ship> MakeShips(int Count, int Length, int Width)
@@ -79,7 +79,7 @@ namespace ContainerSchip.Classes
             int currentCapacity = 0;
             List<Ship> usedShips = new List<Ship>();
             int totalWeight = containers.Sum(c => c.weight);
-            int maxStackWeight = 120000; // 120 tonnes in kg
+            int maxStackWeight = 150;
 
             foreach (var width in sortedWidths)
             {
@@ -136,8 +136,8 @@ namespace ContainerSchip.Classes
                 int shipCapacityForNormal = ship.Length * ship.Width * 4;
                 shipCapacityForNormal -= (valuableContainerCount + coolableContainerCount + valuableCoolableContainerCount);
                 totalCapacityForNormalContainers += shipCapacityForNormal;
-                int shipMaxWeight = ship.Length * ship.Width * maxStackWeight * 4;
-                if (totalWeight > shipMaxWeight || ship.MaxWeight / 2 > totalWeight)
+                int shipMaxWeight = ship.Length * ship.Width * maxStackWeight;
+                if (totalWeight > shipMaxWeight || shipMaxWeight / 2 > totalWeight)
                 {
                     throw new InvalidOperationException("Ship weight limit exceeded or capacity less than 50%");
                 }
@@ -216,9 +216,11 @@ namespace ContainerSchip.Classes
 
             containerPlacementList.AddRange(coolableContainers);
             containerPlacementList.AddRange(coolableValuableContainers);
-            containerPlacementList.AddRange(valuableContainers);
             containerPlacementList.AddRange(normalContainers);
+            containerPlacementList.AddRange(valuableContainers);
+            
 
+            // !TODO rewrite so it only takes so called "usableShips" correctly, currently botched to debug other functions
             foreach (var container in containerPlacementList)
             {
                 double bestFitness = double.MaxValue;
@@ -238,7 +240,7 @@ namespace ContainerSchip.Classes
                             {
                                 tempFitness = container.CalculateFitness(Width, Height, Length, ships[ShipIndex].ShipData);
 
-                                if (tempFitness < bestFitness && ships[bestShip].ShipData[bestLength, bestWidth, bestHeight].fitness == null)
+                                if (tempFitness < bestFitness && ships[ShipIndex].ShipData[Length, Width, Height] == null)
                                 {
                                     bestFitness = tempFitness;
                                     bestShip = ShipIndex;
@@ -251,6 +253,7 @@ namespace ContainerSchip.Classes
                     }
                 }
 
+                container.CalculateFitness(bestWidth, bestHeight, bestLength, ships[bestShip].ShipData);
                 ships[bestShip].ShipData[bestLength, bestWidth, bestHeight] = container;
             }
 

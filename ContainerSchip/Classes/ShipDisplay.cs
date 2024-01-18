@@ -25,11 +25,11 @@ namespace ContainerSchip.Classes
                         IContainer container = Ship.ShipData[length, width, height];
                         if (container != null)
                         {
-                            Console.Write(DisplayContainer(container) + " ");
+                            Console.Write(DisplayContainer(container) + " " + container.fitness);
                         }
                         else
                         {
-                            Console.Write("Empty ");
+                            Console.Write("E ");
                         }
                     }
                     Console.WriteLine();

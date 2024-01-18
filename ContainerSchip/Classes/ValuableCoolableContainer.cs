@@ -19,31 +19,49 @@ public class ValuableCoolableContainer : IContainer
 
     public ValuableCoolableContainer()
     {
-        weight = new Random().Next(0, 26);
+        weight = new Random().Next(10, 26) + 4;
         valuable = true;
         coolable = true;
     }
 
     public double CalculateFitness(int width, int height, int length, IContainer[,,] shipData)
     {
+        double conditionMissedVal = 1000000;
+        double maxWidth = shipData.GetLength(0)+0.5;
         double dWidth = (double)width;
         double dHeight = (double)height;
         dWidth += 1;
         dHeight += 1;
-        fitness = weight / ((width / (width * 0.5)) * height);
+        fitness = (weight * (Math.Abs(dWidth - (maxWidth / 2.0)))) / (dHeight);
         if (length > 0)
         {
-            fitness += 1000000;
+            fitness += conditionMissedVal;
+            conditionMissedVal = 0;
         }
+
+        conditionMissedVal = 1000000;
 
         if (!IsTopContainer(length, width, height, shipData))
         {
-            fitness += 1000000;
+            fitness += conditionMissedVal;
+            conditionMissedVal = 0;
         }
 
-        if (!HasContainerInFront(length, width, height, shipData) || !HasContainerBehind(length, width, height, shipData))
+        if (HasContainerInFront(length, width, height, shipData) && HasContainerBehind(length, width, height, shipData))
         {
-            fitness += 1000000;
+            fitness += conditionMissedVal;
+            conditionMissedVal = 0;
+        }
+
+        conditionMissedVal = 1000000;
+
+        if (height > 0)
+        {
+            if ((shipData[length, width, height - 1] is Object) && shipData[length, width, height - 1].valuable || !(shipData[length, width, height - 1] is Object))
+            {
+                fitness += conditionMissedVal;
+                conditionMissedVal = 0;
+            }
         }
 
         return fitness;
@@ -51,17 +69,21 @@ public class ValuableCoolableContainer : IContainer
 
     bool IsTopContainer(int length, int width, int height, IContainer[,,] shipData)
     {
-        return height == shipData.GetLength(2) - 1 || shipData[length, width, height + 1] == null;
+        if (height == 3)
+            return true;
+        if (!(shipData[length, width, height + 1] is Object))
+            return true;
+        return false;
     }
 
     bool HasContainerInFront(int length, int width, int height, IContainer[,,] shipData)
     {
-        return length > 0 && shipData[length - 1, width, height] != null;
+        return length > 0 && (shipData[length - 1, width, height] is Object);
     }
 
     bool HasContainerBehind(int length, int width, int height, IContainer[,,] shipData)
     {
-        return length < shipData.GetLength(0) - 1 && shipData[length + 1, width, height] != null;
+        return length < shipData.GetLength(0) - 1 && (shipData[length + 1, width, height] is Object);
     }
 
 }

@@ -18,18 +18,28 @@ public class NormalContainer : IContainer
 
     public NormalContainer()
     {
-        weight = new Random().Next(0, 26);
+        weight = new Random().Next(10, 26) + 4;
         valuable = false;
         coolable = false;
     }
 
     public double CalculateFitness(int width, int height, int length, IContainer[,,] shipData)
     {
+        double maxWidth = shipData.GetLength(0)+0.5;
         double dWidth = (double)width;
         double dHeight = (double)height;
         dWidth += 1;
         dHeight += 1;
-        fitness = weight / ((width / (width * 0.5)) * (1 / height));
+        fitness = (weight * Math.Abs(dWidth - (maxWidth / 2.0))) / (1 / dHeight);
+
+        if (height > 0)
+        {
+            if ((shipData[length, width, height - 1] is Object) && shipData[length, width, height - 1].valuable || !(shipData[length, width, height - 1] is Object))
+            {
+                fitness += 1000000;
+            }
+        }
+
         return fitness;
     }
 

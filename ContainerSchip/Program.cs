@@ -44,7 +44,8 @@ while (!done)
 
 Dock dock = new Dock(normalContainerCount, coolableContainerCount, valuableContainerCount, valuableCoolableContainerCount, shipParameters);
 
-dock.PlaceContainers(dock.FindShipsToUse(), dock.containers);
+//!TODO change back to dock.PlaceContainers(dock.FindShipsToUse(), dock.containers); botch in effect
+dock.PlaceContainers(dock.ships, dock.containers);
 
 foreach (var ship in dock.ships)
 {
